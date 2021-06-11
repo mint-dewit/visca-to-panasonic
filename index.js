@@ -61,10 +61,10 @@ if (process.argv[3] === 'udp') {
 } else if (process.argv[3] === 'tcp') {
     const tcpReceive = createServer((socket) => {
         socket.on('data', (msg) => {
-            socket.write(Buffer.from[[0x90, 0x40, 0xff]])
+            socket.write(Buffer.from([0x90, 0x40, 0xff]))
             console.log(msg)
             decoder.processBuffer(msg)
-            socket.write(Buffer.from[[0x90, 0x50, 0xff]])
+            socket.write(Buffer.from([0x90, 0x50, 0xff]))
         })
     })
     tcpReceive.listen(process.argv[4] || 52381)
