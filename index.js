@@ -1,11 +1,12 @@
 const { createSocket } = require('dgram')
+const { createServer } = require('net')
 const { ViscaDecoder } = require('./decoder')
 const { PanasonicController } = require('./encoder')
 
 const decoder = new ViscaDecoder()
 decoder.on('log', (msg) => console.log(msg))
 
-console.log('host', process.argv[2], 'port', process.argv[3] || 52381)
+console.log('host', process.argv[2], 'port', process.argv[4] || 52381, process.argv[3])
 
 const encoder = new PanasonicController(process.argv[2])
 
@@ -49,8 +50,18 @@ decoder.on('focusOp', controls => {
     encoder.setFocus(focus)
 })
 
-const receiveSocket = createSocket('udp4', (msg) => {
-    console.log(msg)
-    decoder.processBuffer(msg)
-})
-receiveSocket.bind(process.argv[3] || 52381)
+if (process.argv[3] === 'udp') {
+    const receiveSocket = createSocket('udp4', (msg) => {
+        console.log(msg)
+        decoder.processBuffer(msg)
+    })
+    receiveSocket.bind(process.argv[4] || 52381)
+} else if (process.argv[3] === 'tcp') {
+    const tcpReceive = createServer((msg) => {
+        console.log(msg)
+        decoder.processBuffer(msg)
+    })
+    tcpReceive.listen(process.argv[4] || 52381)
+} else {
+    throw new Error('TCP or UDP not specified!')
+}
