@@ -45,7 +45,7 @@ decoder.on('zoomOp', controls => {
 decoder.on('focusOp', controls => {
     const { operation, speed } = controls
     const modifier = operation === 'far' ? 1 : operation === 'near' ? -1 : 0
-    const focus = 50 + modifier * 49 * (speed || 0.5)
+    const focus = 50 + modifier * 49 * ((0.125 + speed / 8) || 0.5)
     console.log(operation, speed, modifier, focus)
     encoder.setFocus(focus)
 })
