@@ -38,7 +38,7 @@ decoder.on('panTiltOp', controls => {
 decoder.on('zoomOp', controls => {
     const { operation, speed } = controls
     const modifier = operation === 'in' ? 1 : operation === 'out' ? -1 : 0
-    const zoom = 50 + modifier * 49 * (speed || 0.5)
+    const zoom = 50 + modifier * 49 * ((0.125 + speed / 8) || 0.5)
     console.log(operation, speed, modifier, zoom)
     encoder.setZoom(zoom)
 })
