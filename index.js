@@ -51,16 +51,20 @@ decoder.on('focusOp', controls => {
 })
 
 if (process.argv[3] === 'udp') {
-    const receiveSocket = createSocket('udp4', (msg) => {
+    const receiveSocket = createSocket('udp4', (msg, origin) => {
+        receiveSocket.send(Buffer.from[[0x90, 0x40, 0xff]], origin.port, origin.address)
         console.log(msg)
         decoder.processBuffer(msg)
+        receiveSocket.send(Buffer.from[[0x90, 0x50, 0xff]], origin.port, origin.address)
     })
     receiveSocket.bind(process.argv[4] || 52381)
 } else if (process.argv[3] === 'tcp') {
     const tcpReceive = createServer((socket) => {
         socket.on('data', (msg) => {
+            socket.write(Buffer.from[[0x90, 0x40, 0xff]])
             console.log(msg)
             decoder.processBuffer(msg)
+            socket.write(Buffer.from[[0x90, 0x50, 0xff]])
         })
     })
     tcpReceive.listen(process.argv[4] || 52381)
